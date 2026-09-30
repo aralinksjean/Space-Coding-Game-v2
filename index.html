@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Pals: Code Kit Home!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1d1a57;--panel:#2b2880;--ink:#fff;--motion:#2f7de1;--looks:#8a4fd6;--sound:#2fa866;--control:#f0a11a;--go:#3ccf6e;--end:#e04b4b;--cs:calc(min(92vw,420px)/6)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 10%,#3a35a8,var(--bg) 60%);color:var(--ink);
+font:600 18px/1.4 Fredoka,system-ui,sans-serif;padding:env(safe-area-inset-top,0) 12px env(safe-area-inset-bottom,0)}
+.wrap{max-width:960px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between;padding:12px 0}
+h1{font-size:1.6rem;margin:0}
+#clock{background:rgba(255,255,255,.14);border-radius:99px;padding:2px 14px;font-size:1rem}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav button{width:44px;height:44px;border-radius:50%;border:3px solid #fff5;background:#0003;color:#fff;font:700 1.1rem Fredoka;cursor:pointer}
+nav button.done{background:var(--sound)}nav button.cur{border-color:#ffd84a;box-shadow:0 0 0 3px #ffd84a66}
+#story{background:var(--panel);border-radius:18px;padding:12px 16px;margin-bottom:12px}
+#story h2{margin:0 0 2px;font-size:1.35rem}
+#story p{margin:0}
+details{margin-top:6px;font-size:.95rem;color:#d7d3ff}summary{cursor:pointer}
+.main{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+@media(max-width:820px){.main{grid-template-columns:1fr}}
+#stagebox{display:flex;flex-direction:column;align-items:center;gap:8px}
+#stage{position:relative;width:calc(var(--cs)*6);height:calc(var(--cs)*6);border-radius:18px;overflow:hidden;
+background:linear-gradient(#0000 calc(100% - 2px),#ffffff22 0) 0 0/100% var(--cs),linear-gradient(90deg,#0000 calc(100% - 2px),#ffffff22 0) 0 0/var(--cs) 100%,#0d0b33;border:4px solid #ffffff44}
+.sp{position:absolute;width:var(--cs);height:var(--cs);display:flex;align-items:center;justify-content:center;font-size:calc(var(--cs)*.62);transition:left .35s,top .35s}
+#kit{z-index:3}#kit .e{display:inline-block;transition:transform .5s}
+.bubble{position:absolute;bottom:88%;left:50%;transform:translateX(-30%);background:#fff;color:#222;border-radius:14px;padding:2px 10px;font-size:calc(var(--cs)*.28);white-space:nowrap;z-index:9}
+.shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pop{animation:pp .4s}@keyframes pp{50%{transform:scale(1.6)}}
+@media(prefers-reduced-motion:reduce){.shake,.pop{animation:none}.sp,#kit .e{transition:none}}
+#msg{min-height:2.6em;text-align:center;max-width:calc(var(--cs)*6)}
+.panel{background:var(--panel);border-radius:18px;padding:12px}
+.lab{font-size:.95rem;color:#cfcaff;margin:2px 0 6px;display:flex;justify-content:space-between}
+#script{min-height:120px;background:#0004;border-radius:14px;padding:10px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;margin-bottom:12px}
+.chip{display:inline-flex;align-items:center;gap:4px;border:0;border-radius:12px;padding:8px 12px;color:#fff;font:700 1.05rem Fredoka;min-height:48px}
+.chip.motion,.pal .motion{background:var(--motion)}.chip.looks,.pal .looks{background:var(--looks)}.chip.sound,.pal .sound{background:var(--sound)}
+.chip.control,.pal .control{background:var(--control);color:#3a2600}.chip.flag{background:var(--go);color:#063}
+.chip.on{outline:4px solid #fff;transform:scale(1.08)}
+.chip .x{margin-left:4px;background:#0004;border-radius:50%;width:26px;height:26px;border:0;color:#fff;font-size:.9rem;cursor:pointer}
+.chip .n{background:#0003;border:0;border-radius:8px;padding:2px 8px;color:inherit;font:700 1.05rem Fredoka;cursor:pointer}
+.pal{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.pal button{border:0;border-radius:14px;padding:10px 14px;font:700 1.05rem Fredoka;color:#fff;cursor:pointer;min-height:52px}
+.pal button:disabled{opacity:.35;cursor:not-allowed}
+.ctl{display:flex;gap:8px;flex-wrap:wrap}
+.ctl button{flex:1;min-width:110px;border:0;border-radius:99px;padding:12px;font:700 1.15rem Fredoka;cursor:pointer;color:#fff}
+#run{background:var(--go);color:#063}#reset{background:var(--control);color:#3a2600}#clear{background:var(--end)}
+button:focus-visible{outline:4px solid #ffd84a;outline-offset:2px}
+#ov{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+#ov.show{display:flex}
+#card{background:#fff;color:#1d1a57;border-radius:24px;padding:24px;max-width:460px;width:100%;text-align:center}
+#card h2{margin:0 0 6px;font-size:1.8rem}
+#card .big{font-size:3rem}
+#card button,#card input{font:700 1.1rem Fredoka;border-radius:99px;padding:10px 20px;border:3px solid #1d1a57;margin:6px 4px}
+#card button{background:#1d1a57;color:#fff;cursor:pointer}
+.cert{border:6px double #f0a11a;border-radius:16px;padding:14px;margin:10px 0}
+#mute{background:transparent;border:2px solid #fff5;color:#fff;border-radius:99px;padding:4px 12px;font:600 .95rem Fredoka;cursor:pointer}
+@media print{body{background:#fff}.wrap>*:not(#ov){display:none}#ov{position:static;background:none;display:block}#card button,#card input{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>🚀 Space Pals</h1>
+<span id="clock">⏱ 00:00 / 60:00</span>
+<button id="mute" aria-label="Toggle sound">🔊 Sound on</button>
+<nav id="nav" aria-label="Missions"></nav>
+</header>
+
+<div id="story"><h2 id="st"></h2><p id="sp"></p><details><summary>Teacher tip</summary><span id="tip"></span></details></div>
+
+<div class="main">
+<div id="stagebox"><div id="stage" aria-label="Space map"></div><div id="msg" role="status"></div></div>
+<div class="panel">
+<div class="lab"><span>1. Tap blocks to build your code</span><span id="cnt"></span></div>
+<div id="script" aria-label="Your code"></div>
+<div class="lab"><span>Blocks</span></div>
+<div class="pal" id="pal"></div>
+<div class="ctl"><button id="run">▶ Go!</button><button id="reset">↺ Back</button><button id="clear">🗑 Clear</button></div>
+</div>
+</div>
+</div>
+
+<div id="ov"><div id="card"></div></div>
+
+<script>
+var $=function(s){return document.querySelector(s)};
+var B={up:{i:'⬆️',n:'Up',c:'motion',dx:0,dy:-1},down:{i:'⬇️',n:'Down',c:'motion',dx:0,dy:1},
+left:{i:'⬅️',n:'Left',c:'motion',dx:-1,dy:0},right:{i:'➡️',n:'Right',c:'motion',dx:1,dy:0},
+rep:{i:'🔁',n:'Repeat',c:'control'},say:{i:'💬',n:'Say Hello',c:'looks'},sound:{i:'🔊',n:'Pop',c:'sound'},dance:{i:'💃',n:'Dance',c:'looks'}};
+var M=['up','down','left','right'];
+var LV=[
+{t:'Mission 1: Blast Off!',s:'Captain Kit is lost! Tap ⬆️ Up to fly Kit to the planet 🪐.',tip:'Let kids count aloud as they tap. About 6 minutes.',start:[0,5],goal:[0,1],ge:'🪐',stars:[],rocks:[],allow:['up'],max:8,par:4,pre:[]},
+{t:'Mission 2: Fly to Planet Bloop',s:'Now Kit must fly across space. Which way is the planet? Pick the right block!',tip:'Ask: "Left or right?" Have kids point before tapping. About 6 minutes.',start:[0,5],goal:[5,5],ge:'🪐',stars:[],rocks:[],allow:['right','left','up'],max:8,par:5,pre:[]},
+{t:'Mission 3: Up and Over',s:'Mix two moves! Fly up, then across, to reach the planet.',tip:'Sequence matters: try up first, then right. Then swap and compare. About 7 minutes.',start:[0,5],goal:[4,1],ge:'🪐',stars:[],rocks:[],allow:['up','right','left','down'],max:12,par:8,pre:[]},
+{t:'Mission 4: Repeat Magic',s:'Too many blocks! The 🔁 Repeat block does the next block again and again. Tap its number to change how many times.',tip:'Repeat covers the block right after it. Show how 5 taps become 2 blocks. About 8 minutes.',start:[0,5],goal:[5,0],ge:'🪐',stars:[],rocks:[],allow:['up','right','rep'],max:6,par:4,pre:[]},
+{t:'Mission 5: Bug Hunt 🐛',s:'Oh no, a bug! Kit stops short. Fix the code so Kit reaches the planet.',tip:'Celebrate the bug. Ask: "What is missing?" About 7 minutes.',start:[0,5],goal:[4,1],ge:'🪐',stars:[],rocks:[],allow:['up','right','left','down','rep'],max:12,par:6,pre:[{t:'up'},{t:'up'},{t:'up'},{t:'right'},{t:'right'}]},
+{t:'Mission 6: Star Collector',s:'Grab all 3 stars ⭐ and land on the planet. Watch out for the asteroids ☄️!',tip:'Plan the path with a finger first. Repeat makes it shorter. About 9 minutes.',start:[0,5],goal:[5,5],ge:'🪐',stars:[[1,3],[3,3],[5,3]],rocks:[[2,5],[3,5],[4,5]],allow:['up','down','left','right','rep'],max:10,par:6,pre:[]},
+{t:'Mission 7: Meet the Alien',s:'Fly to the alien 👽. When you get there, tell it 💬 Hello and make a 🔊 Pop!',tip:'Two-part goal: reach it, then act. Ask kids to say the code out loud. About 9 minutes.',start:[0,5],goal:[4,2],ge:'👽',stars:[],rocks:[[2,5],[2,3]],allow:['up','right','left','down','rep','say','sound'],max:12,par:7,need:'both',pre:[]},
+{t:'Mission 8: Maze Runner',s:'A wall of asteroids ☄️ blocks the way up! Find the gap and fly Kit to the planet.',tip:'Trace the path with a finger before tapping. Fast finishers can try with fewer blocks. About 6 minutes.',start:[0,5],goal:[5,0],ge:'🪐',stars:[],rocks:[[0,3],[1,3],[2,3]],allow:['up','down','left','right','rep'],max:9,par:6,pre:[]},
+{t:'Mission 9: Star Stairs',s:'Climb the star stairs! Zig right, zag up, and grab every ⭐ on the way to the planet.',tip:'Kids discover the right-up-right-up pattern. Say it out loud together. About 6 minutes.',start:[0,5],goal:[4,1],ge:'🪐',stars:[[1,4],[2,3],[3,2]],rocks:[],allow:['up','right'],max:10,par:8,pre:[]},
+{t:'Mission 10: Bug Hunt 2 🐛',s:'Another bug! Kit stops too soon. Tap a 🔁 number to fix the code.',tip:'The bug is a wrong repeat number. Ask: "Which number is too small?" About 5 minutes.',start:[0,5],goal:[5,1],ge:'🪐',stars:[],rocks:[],allow:['up','right','rep'],max:8,par:4,pre:[{t:'rep',n:2},{t:'right'},{t:'rep',n:2},{t:'up'}]},
+{t:'Mission 11: Alien Hideout',s:'The alien 👽 is hiding behind a wall! Fly around it, then say 💬 Hello and 🔊 Pop.',tip:'Reach, then act. Ask kids to predict Kit route first. About 6 minutes.',start:[0,5],goal:[5,1],ge:'👽',stars:[],rocks:[[3,5],[3,4],[3,3]],allow:['up','right','left','down','rep','say','sound'],max:11,par:7,need:'both',pre:[]},
+{t:'Mission 12: Star Loop',s:'Collect all 3 stars ⭐ around the rocks, then land on the planet.',tip:'Break the route into 4 parts, then use Repeat for each part. About 7 minutes.',start:[0,5],goal:[5,4],ge:'🪐',stars:[[0,2],[3,2],[3,4]],rocks:[[1,3],[2,3],[1,4],[2,4]],allow:['up','down','left','right','rep'],max:10,par:8,pre:[]},
+{t:'Mission 13: Short Code Challenge',s:'Can you reach the planet with only 6 blocks? Repeat is your superpower!',tip:'A pure repeat challenge. Celebrate the shortest solution. About 5 minutes.',start:[0,0],goal:[5,5],ge:'🪐',stars:[],rocks:[[1,1],[2,2],[3,3],[4,4]],allow:['up','down','left','right','rep'],max:6,par:4,pre:[]},
+{t:'Mission 14: Alien Rescue',s:'Grab 2 stars ⭐, find the alien 👽, then say 💬 Hello and 🔊 Pop.',tip:'The hardest one: route, collect, act. Encourage pairs to plan aloud. About 8 minutes.',start:[5,5],goal:[0,0],ge:'👽',stars:[[5,3],[3,3]],rocks:[[4,2],[2,2],[4,1],[2,1]],allow:['up','down','left','right','rep','say','sound'],max:14,par:10,need:'both',pre:[]},
+{t:'Mission 15: Galaxy Party 🎉',s:'Make Kit dance! Build a party with at least 5 blocks that includes 💬 Say and 💃 Dance.',tip:'Free creation. Invite kids to show their party to a neighbor. About 8 minutes.',start:[2,3],goal:null,stars:[],rocks:[],allow:['up','down','left','right','rep','say','sound','dance'],max:14,need:'party',pre:[]}
+];
+var cur=0,script=[],running=false,done={},T=null,mute=false,ac,t0=0,tmr;
+
+function beep(f,d){if(mute)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();var o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+(d||.12))}catch(e){}}
+function startClock(){if(t0)return;t0=Date.now();tmr=setInterval(function(){var s=Math.floor((Date.now()-t0)/1000),m=Math.floor(s/60);$('#clock').textContent='⏱ '+(m<10?'0':'')+m+':'+((s%60)<10?'0':'')+(s%60)+' / 60:00'},1000)}
+document.addEventListener('click',startClock);
+$('#mute').onclick=function(){mute=!mute;this.textContent=mute?'🔇 Sound off':'🔊 Sound on'};
+
+function msg(t){$('#msg').textContent=t}
+function nav(){var n=$('#nav');n.innerHTML='';LV.forEach(function(l,i){var b=document.createElement('button');b.textContent=done[i]?'✓':i+1;b.className=(done[i]?'done ':'')+(i===cur?'cur':'');b.setAttribute('aria-label','Mission '+(i+1));b.onclick=function(){if(!running)load(i)};n.appendChild(b)})}
+function sprite(id,x,y,html,cls){var d=document.createElement('div');d.className='sp '+(cls||'');d.id=id;d.style.left='calc(var(--cs)*'+x+')';d.style.top='calc(var(--cs)*'+y+')';d.innerHTML=html;$('#stage').appendChild(d);return d}
+function eq(a,x,y){return a[0]===x&&a[1]===y}
+function drawStage(){var L=LV[cur],s=$('#stage');s.innerHTML='';
+L.rocks.forEach(function(r,i){sprite('r'+i,r[0],r[1],'☄️')});
+if(L.goal)sprite('goal',L.goal[0],L.goal[1],L.ge);
+L.stars.forEach(function(p,i){sprite('star'+i,p[0],p[1],'⭐')});
+sprite('kit',L.start[0],L.start[1],'<span class="e">🐱</span>');
+$('#kit').dataset.x=L.start[0];$('#kit').dataset.y=L.start[1]}
+function load(i){cur=i;var L=LV[i];script=L.pre.map(function(p){return{t:p.t,n:p.n}});
+$('#st').textContent=L.t;$('#sp').textContent=L.s;$('#tip').textContent=L.tip;
+drawStage();msg('Tap a block to start!');nav();renderScript();renderPal()}
+function renderPal(){var p=$('#pal');p.innerHTML='';var full=script.length>=LV[cur].max;
+LV[cur].allow.forEach(function(k){var b=document.createElement('button');b.className=B[k].c;b.textContent=B[k].i+' '+B[k].n;b.disabled=running||full;
+b.onclick=function(){script.push(k==='rep'?{t:'rep',n:3}:{t:k});beep(520,.08);renderScript();renderPal()};p.appendChild(b)})}
+function renderScript(){var s=$('#script');s.innerHTML='<span class="chip flag">🏁 When flag tapped</span>';
+script.forEach(function(it,i){var c=document.createElement('span');c.className='chip '+B[it.t].c;c.dataset.i=i;c.innerHTML=B[it.t].i+' '+B[it.t].n;
+if(it.t==='rep'){var n=document.createElement('button');n.className='n';n.textContent='×'+it.n;n.setAttribute('aria-label','Change repeat count');n.onclick=function(){if(running)return;it.n=it.n>=6?2:it.n+1;beep(660,.06);renderScript()};c.appendChild(n)}
+var x=document.createElement('button');x.className='x';x.textContent='✕';x.setAttribute('aria-label','Remove block');x.onclick=function(){if(running)return;script.splice(i,1);renderScript();renderPal()};c.appendChild(x);s.appendChild(c)});
+$('#cnt').textContent='Blocks: '+script.length+' / '+LV[cur].max}
+function hl(a){document.querySelectorAll('#script .chip').forEach(function(c){c.classList.toggle('on',a&&a.indexOf(+c.dataset.i)>-1)})}
+function setKit(x,y){var k=$('#kit');k.dataset.x=x;k.dataset.y=y;k.style.left='calc(var(--cs)*'+x+')';k.style.top='calc(var(--cs)*'+y+')'}
+function resetKit(){var L=LV[cur];drawStage();hl(null)}
+
+function run(){if(running)return;resetKit();var L=LV[cur],steps=[];
+for(var i=0;i<script.length;i++){var it=script[i];
+if(it.t==='rep'){var nx=script[i+1];if(nx&&nx.t!=='rep'){for(var k=0;k<it.n;k++)steps.push({b:nx.t,h:[i,i+1]});i++}}
+else steps.push({b:it.t,h:[i]})}
+if(!steps.length){msg('Add some blocks first! Tap a block below.');return}
+running=true;renderPal();msg('Kit is flying...');
+var px=L.start[0],py=L.start[1],got={},said=0,sang=0,danced=0,atSay=0,atSound=0,idx=0;
+function finish(ok,text){running=false;hl(null);renderPal();if(ok)win();else msg(text)}
+function step(){
+if(idx>=steps.length){hl(null);return evalEnd()}
+var s=steps[idx++],b=s.b;hl(s.h);var k=$('#kit'),e=k.querySelector('.e');
+if(B[b].dx!==undefined){var nx=px+B[b].dx,ny=py+B[b].dy;
+if(nx<0||ny<0||nx>5||ny>5||L.rocks.some(function(r){return eq(r,nx,ny)})){k.classList.add('shake');beep(160,.25);
+return setTimeout(function(){k.classList.remove('shake');finish(false,'Bump! Kit hit something. Check your blocks and try again 🐛')},450)}
+px=nx;py=ny;setKit(px,py);beep(400+idx*15,.08);
+L.stars.forEach(function(p,i){if(eq(p,px,py)&&!got[i]){got[i]=1;var st=$('#star'+i);if(st){st.classList.add('pop');setTimeout(function(){st.style.visibility='hidden'},300)}beep(900,.15)}})}
+else if(b==='say'){said=1;if(L.goal&&eq(L.goal,px,py))atSay=1;var bb=document.createElement('div');bb.className='bubble';bb.textContent='Hello!';k.appendChild(bb);setTimeout(function(){bb.remove()},700);beep(700,.12)}
+else if(b==='sound'){sang=1;if(L.goal&&eq(L.goal,px,py))atSound=1;k.classList.add('pop');setTimeout(function(){k.classList.remove('pop')},400);beep(300,.2)}
+else if(b==='dance'){danced=1;e.style.transform='rotate(360deg) scale(1.3)';setTimeout(function(){e.style.transform=''},500);beep(800,.1)}
+setTimeout(step,480)}
+function evalEnd(){
+var n=Object.keys(got).length;
+if(L.need==='party'){if(script.length>=5&&danced&&said)return finish(true);return finish(false,'Add at least 5 blocks with 💬 Say and 💃 Dance to start the party!')}
+if(!eq(L.goal,px,py))return finish(false,'Kit is not there yet. Count the squares and try again!');
+if(n<L.stars.length)return finish(false,'Kit missed a star ⭐. Find a path that collects all 3!');
+if(L.need==='both'&&!(atSay&&atSound))return finish(false,'Nice landing! Now add 💬 Say and 🔊 Pop after Kit arrives.');
+finish(true)}
+step()}
+
+function win(){var L=LV[cur],par=L.par,st=(!par||script.length<=par)?3:2;done[cur]=1;nav();beep(880,.2);setTimeout(function(){beep(1100,.3)},200);
+var c=$('#card'),star='⭐'.repeat(st)+'☆'.repeat(3-st);
+if(cur===LV.length-1){c.innerHTML='<div class="big">🎉🏆🎉</div><h2>You did it!</h2><div class="cert"><p>This certificate is proudly given to</p><h2 id="nm">Space Pal</h2><p>for helping Kit get home and throwing the best galaxy party! 🚀</p></div><input id="name" placeholder="Type your name" maxlength="20" aria-label="Your name"><br><button id="pr">🖨 Print</button><button id="again">Play again</button>';
+$('#name').oninput=function(){$('#nm').textContent=this.value||'Space Pal'};$('#pr').onclick=function(){window.print()};$('#again').onclick=function(){done={};close();load(0)}}
+else{c.innerHTML='<div class="big">'+(L.ge==='👽'?'👽':'🎉')+'</div><h2>Mission complete!</h2><div class="big">'+star+'</div><p>'+(st===3?'Super neat code!':'Great job! Can you do it with fewer blocks?')+'</p><button id="nx">Next mission ▶</button><button id="rt">Try again</button>';
+$('#nx').onclick=function(){close();load(cur+1)};$('#rt').onclick=function(){close();resetKit();msg('Try a shorter code!')}}
+$('#ov').classList.add('show');setTimeout(function(){var f=c.querySelector('button');if(f)f.focus()},50)}
+function close(){$('#ov').classList.remove('show')}
+
+$('#run').onclick=run;
+$('#reset').onclick=function(){if(!running){resetKit();msg('Kit is back at the start.')}};
+$('#clear').onclick=function(){if(!running){script=[];renderScript();renderPal();resetKit();msg('Fresh start! Tap a block.')}};
+load(0);
+</script>
+</body>
+</html>
